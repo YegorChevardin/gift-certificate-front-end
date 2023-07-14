@@ -14,6 +14,7 @@ function App() {
                 <Route path="/" element={<Layout />}>
                     <Route index element={<Main/>}/>
                     <Route path="gift-certificates" element={<GiftCertificates />}/>
+                    <Route path="gift-certificates/:index" element={<GiftCertificate />}/>
                     <Route path="*" element={<Error404/>}/>
                 </Route>
             </Routes>
