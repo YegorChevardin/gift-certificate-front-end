@@ -1,23 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import GiftCertificate from "./pages/gift-certificates/GiftCertificate";
+import React from "react";
+import Layout from "./pages/templates/Layout";
+import GiftCertificates from "./pages/gift-certificates/GiftCertificates";
+import Main from "./pages/Main";
+import Error404 from "./pages/errors/Error404";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Layout />}>
+                    <Route index element={<Main/>}/>
+                    <Route path="gift-certificates" element={<GiftCertificates />}/>
+                    <Route path="*" element={<Error404/>}/>
+                </Route>
+            </Routes>
+        </BrowserRouter>
     </div>
   );
 }
