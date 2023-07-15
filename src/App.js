@@ -8,7 +8,7 @@ import Error404 from "./pages/errors/Error404";
 
 function App() {
   return (
-    <div className="App">
+    <div id="app">
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Layout />}>
