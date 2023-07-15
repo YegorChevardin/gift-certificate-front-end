@@ -8,12 +8,13 @@ import Error404 from "./pages/errors/Error404";
 
 function App() {
   return (
-    <div className="App">
+    <div id="app">
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Layout />}>
                     <Route index element={<Main/>}/>
                     <Route path="gift-certificates" element={<GiftCertificates />}/>
+                    <Route path="gift-certificates/:index" element={<GiftCertificate />}/>
                     <Route path="*" element={<Error404/>}/>
                 </Route>
             </Routes>
