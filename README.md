@@ -4,6 +4,12 @@ This project was created in order to build front-end application for this API: [
 
 ## How to start the project locally?
 
+Prepare `.env` file from the `.env-example` file, that will contain link to `gift-certificate` API application, like in reference above.
+Here is the example of env file:
+```text
+REACT_APP_API_URL=https://your-custom-link-to-api
+```
+
 In the project directory run:
 >`npm start`
 
