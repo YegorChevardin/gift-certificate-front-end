@@ -17,6 +17,7 @@ function GiftCertificates() {
 
     function prepareQueryParams(url) {
         let urlWithParams = url;
+        //implement here
         return urlWithParams;
     }
 
@@ -75,6 +76,32 @@ function GiftCertificates() {
                 }
                 {(!error && giftCertificates !== null && giftCertificates.length > 0) && (
                     <>
+                        <nav className="navbar navbar-expand-lg">
+                            <div className="container-fluid">
+                                <form id="gift-certificates-filter-form" method="get"
+                                      className="d-flex flex-wrap align-items-baseline justify-content-start w-100">
+                                    <div className="d-flex flex-nowrap mt-2 align-items-center justify-content-between">
+                                        <select name="size" id="page-size-select" className="form-select-sm"
+                                                aria-label="Page size">
+                                            <option selected>5</option>
+                                            <option>10</option>
+                                            <option>20</option>
+                                            <option>30</option>
+                                        </select>
+                                        <label htmlFor="page-size-select" className="form-label m-1">
+                                            Page size
+                                        </label>
+                                    </div>
+                                    <button className="btn btn-sm btn-outline-primary m-2" type="submit">
+                                        <span className="me-1"><i className="bi bi-funnel"></i></span>
+                                        <span>Apply</span>
+                                    </button>
+                                    <button type="button" className="btn btn-sm btn-outline-secondary m-2">
+                                        Reset
+                                    </button>
+                                </form>
+                            </div>
+                        </nav>
                         <nav className="navbar navbar-expand-lg navbar-light bg-light rounded rounded-4 mb-4">
                             <div className="container-fluid">
                                 <form method="get" className="d-flex w-100"
