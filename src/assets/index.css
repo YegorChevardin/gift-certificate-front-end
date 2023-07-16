@@ -1,0 +1,10 @@
+#footer-margins {
+    margin-top: 10em;
+}
+
+.card-hover{
+    transition: 0.3s;
+}
+.card-hover:hover {
+    box-shadow: 5px 5px 18px rgba(0, 0, 0, 0.2);
+}

@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 import Confetti from "react-confetti";
+import {Link} from "react-router-dom";
 
 function Main() {
     const [confettiVisible, setConfettiVisible] = useState(true);
-    const [activeParticles, setActiveParticles] = useState(200);
+    const [activeParticles, setActiveParticles] = useState(100);
 
     const [windowResize, setWindowsResize] = useState({
         width: undefined,
@@ -23,9 +24,9 @@ function Main() {
             setTimeout(() => {
                 setActiveParticles(activeParticles - 10);
 
-            }, 500);
+            }, 1000);
         }
-    }, [confettiVisible, activeParticles, windowResize]);
+    }, [confettiVisible, activeParticles]);
 
     useEffect(() => {
         if (activeParticles === 0) {
@@ -44,13 +45,13 @@ function Main() {
                         unlock exclusive deals and personalized recommendations.
                     </p>
                     <div className="d-flex flex-wrap justify-content-center align-items-center gap-2 mb-5">
-                        <button className="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill"
+                        <Link to="/gift-certificates" className="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill"
                                 type="button">
                             Browse certificates!
-                        </button>
-                        <button className="btn btn-outline-secondary btn-lg px-4 rounded-pill" type="button">
+                        </Link>
+                        <Link to="/login" className="btn btn-outline-secondary btn-lg px-4 rounded-pill" type="button">
                             Login
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>
