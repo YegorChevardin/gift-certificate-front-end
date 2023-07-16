@@ -1,8 +1,7 @@
-import {Link, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from 'react';
-import isObjectEmpty from "../../utils/isObjectEmpty";
 import Tag from "./tags/Tag";
-import GiftCertificate from "./GiftCertificate";
+import axios from "axios";
 
 function GiftCertificateSingle() {
     const {index} = useParams();
@@ -13,15 +12,15 @@ function GiftCertificateSingle() {
     useEffect(() => {
         const fetchGiftCertificate = async () => {
             try {
-                const response = await fetch(giftCertificateApiUrl);
-                if (response.ok) {
-                    const giftCertificateData = await response.json();
+                const response = await axios.get(giftCertificateApiUrl);
+                if (response.status === 200) {
+                    const giftCertificateData = response.data;
                     setData(giftCertificateData);
                 } else {
-                    setError("This gift certificate is not exist.");
+                    setError('This gift certificate does not exist.');
                 }
             } catch (error) {
-                setError("Something went wrong, try again later");
+                setError('Something went wrong, try again later.');
             }
         };
 

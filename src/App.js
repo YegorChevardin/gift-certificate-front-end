@@ -1,5 +1,4 @@
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import GiftCertificate from "./pages/gift-certificates/GiftCertificate";
 import React from "react";
 import Layout from "./pages/templates/Layout";
 import GiftCertificates from "./pages/gift-certificates/GiftCertificates";
