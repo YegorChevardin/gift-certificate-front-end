@@ -74,13 +74,6 @@ function GiftCertificateSingle() {
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="d-flex align-items-center">
-                                            <Link to="#"
-                                                  className="btn btn-sm btn-outline-success m-2 flex-fill">
-                                                <span className="me-1"><i className="bi bi-cart4"></i></span>
-                                                Add to basket
-                                            </Link>
-                                        </div>
                                     </div>
                                 </div>
                             )

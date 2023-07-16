@@ -45,14 +45,9 @@ function GiftCertificate(props) {
                 </div>
                 <div className="d-flex align-items-center">
                     <Link to={"/gift-certificates/" + props.id}
-                          className="btn btn-sm btn-primary m-2 flex-fill">
+                          className="btn btn-sm btn-outline-primary m-2 flex-fill">
                         <span className="me-1"><i className="bi bi-eye"></i></span>
                         View
-                    </Link>
-                    <Link to="#"
-                          className="btn btn-sm btn-outline-success m-2 flex-fill">
-                        <span className="me-1"><i className="bi bi-cart4"></i></span>
-                        Add to basket
                     </Link>
                 </div>
             </div>

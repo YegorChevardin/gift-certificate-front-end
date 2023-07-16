@@ -25,9 +25,8 @@ export default function Navbar() {
                                     Account<i className="bi bi-person-fill ms-1"></i>
                                 </Link>
                                 <ul className="dropdown-menu rounded rounded-4">
-                                    <li><Link className="dropdown-item" to="/register">Register</Link></li>
-                                    <li><Link className="dropdown-item" to="/login">Login</Link></li>
                                     <li><Link className="dropdown-item" to="/account">Account</Link></li>
+                                    <li><Link className="dropdown-item" to="/login">Login</Link></li>
                                     <li><Link className="dropdown-item" to="/logout">Logout</Link></li>
                                     <li>
                                         <hr className="dropdown-divider"/>
@@ -36,11 +35,6 @@ export default function Navbar() {
                                     <li><Link className="dropdown-item" to="/users">Users</Link></li>
                                     <li><Link className="dropdown-item" to="/roles">Roles</Link></li>
                                 </ul>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/basket">
-                                    <span>Basket<i className="bi bi-basket2-fill ms-1"></i></span>
-                                </Link>
                             </li>
                         </ul>
                     </div>
