@@ -1,10 +1,19 @@
 import React, {useEffect, useState} from "react";
+import {Link, useNavigate} from 'react-router-dom';
+import axios from "axios";
 
 function Login() {
+    const navigate = useNavigate();
+    const apiLoginPath = process.env.REACT_APP_API_URL + "/auth/login";
+    const [loginServerData, setLoginServerData] = useState(null);
+    const [token, setToken] = useState(null);
     const [formData, setFormData] = useState({
         username: "",
         password: ""
     });
+    const [error, setError] = useState(null);
+    const [successLogin, setSuccessLogin] = useState(false);
+
     function handleChange(event) {
         const {name, value} = event.target;
         setFormData(prevState => (
@@ -15,27 +24,59 @@ function Login() {
         ));
     }
 
-    const [error, setError] = useState(null);
-
     const login = (event) => {
         event.preventDefault();
-
         let valid = validateForm();
+        if (valid) {
+            sendForm().then(() => {
+                if (loginServerData) {
+                    fetchToken();
+                }
+            });
+        }
+    }
 
-        console.log(valid);
-        if(valid) {
-            console.log("Sending form with this data: ");
-            console.log(formData);
+    const sendForm = async () => {
+        try {
+            const response = await axios.post(apiLoginPath, formData);
+            if (response.status === 200) {
+                const serverData = await response.data;
+                setLoginServerData(serverData);
+            } else if (response.status === 400) {
+                setError("Incorrect password or username.");
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            console.log(error);
+            const message = error.response.data.message;
+            console.log(message);
+
+            if (message) {
+                setError(message);
+            } else {
+                setError("Something went wrong, try again later.");
+            }
+        }
+    };
+
+    function fetchToken() {
+        const isAdmin = loginServerData.user.roles.some(role => role.name === "admin");
+
+        if (isAdmin) {
+            const bearerToken = "Bearer " + loginServerData.jwtToken;
+            setToken(bearerToken);
+        } else {
+            setError("You need to be an admin for this action.");
         }
     }
 
     function validateForm() {
-        setError(null);
         let appendMessage = "";
         let result = true;
 
         if (formData.username.length > 50 || formData.username.length < 2) {
-            appendMessage += " Username should range between 2 and 50 characters. ";
+            appendMessage += "Username should range between 2 and 50 characters. ";
             result = false;
         }
 
@@ -48,11 +89,36 @@ function Login() {
         return result;
     }
 
+    useEffect(() => {
+        if (token !== null && token !== undefined) {
+            localStorage.setItem("authToken", token);
+            setSuccessLogin(true);
+            navigate("/admin");
+        }
+    }, [token]);
+
+    useEffect(() => {
+        const token = localStorage.getItem("authToken");
+
+        if (token !== undefined && token !== null) {
+            setSuccessLogin(true);
+        }
+    }, []);
+
     return (
         <>
+            {successLogin && (
+                <div className="alert alert-success m-5" role="alert">
+                    <p>
+                        Your last log in was successful, click the button to go to dashboard or login again to
+                        use another account.
+                    </p>
+                    <Link to="/admin" className="btn btn-outline-success btn-sm">Dashboard</Link>
+                </div>
+            )}
             {error && (
                 <div className="alert alert-danger d-flex align-items-center m-5" role="alert">
-                    <strong>Be careful!</strong>{error}
+                    {error}
                 </div>
             )}
             <div id="login" className="container py-5 my-5">
@@ -64,7 +130,8 @@ function Login() {
 
                                 <div className="form-floating">
                                     <input type="text" name="username" className="form-control" id="floatingInput"
-                                           value={formData.username} onChange={handleChange} placeholder="name@example.com"/>
+                                           value={formData.username} onChange={handleChange}
+                                           placeholder="name@example.com"/>
                                     <label htmlFor="floatingInput">Username</label>
                                 </div>
                                 <div className="form-floating">
