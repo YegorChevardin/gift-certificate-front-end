@@ -5,6 +5,7 @@ import GiftCertificates from "./pages/gift-certificates/GiftCertificates";
 import Main from "./pages/Main";
 import Error404 from "./pages/errors/Error404";
 import GiftCertificateSingle from "./pages/gift-certificates/GiftCertificateSingle";
+import Login from "./pages/admin/auth/Login";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
                     <Route index element={<Main/>}/>
                     <Route path="gift-certificates" element={<GiftCertificates />}/>
                     <Route path="gift-certificates/:index" element={<GiftCertificateSingle />}/>
+                    <Route path="/login" element={<Login/>}/>
                     <Route path="*" element={<Error404/>}/>
                 </Route>
             </Routes>
