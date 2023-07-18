@@ -92,6 +92,7 @@ function Login() {
             localStorage.setItem("authToken", token);
             setSuccessLogin(true);
             navigate("/admin");
+            window.location.reload();
         }
     }, [token]);
 
