@@ -6,7 +6,6 @@ import React from "react";
 function CheckAuth() {
     const navigate = useNavigate();
     const apiAuthPath = process.env.REACT_APP_API_URL + "/auth";
-    const [token, setToken] = useState(null);
 
     const checkToken = async (authToken) => {
         try {
@@ -15,9 +14,7 @@ function CheckAuth() {
                     Authorization: authToken
                 }
             });
-            if (response.status === 200) {
-                setToken(authToken);
-            } else {
+            if (response.status !== 200) {
                 throw new Error();
             }
         } catch (error) {
@@ -27,9 +24,8 @@ function CheckAuth() {
                 message = error.response.data;
             }
             alert(message);
-            //todo fix errors
-
             localStorage.removeItem("authToken");
+            navigate("/login");
         }
     };
 
@@ -42,9 +38,6 @@ function CheckAuth() {
 
     return (
         <>
-            {!token && (
-                <Navigate to="/login"/>
-            )}
         </>
     );
 }
