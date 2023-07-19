@@ -15,18 +15,26 @@ function AdminGiftCertificates() {
     const [error, setError] = useState(null);
     const [search, setSearch] = useState(createSearchName());
     const [selectedOption, setSelectedOption] = useState('5');
+    const [isDateSortChecked, setDateSortChecked] = useState(false);
+    const [isNameSortChecked, setNameSortChecked] = useState(false);
 
     function createSearchProperties() {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const page = urlParams.get("page");
         const size = urlParams.get("size");
-        const name = getSearchValueFromParams(urlParams);
+        const name = createSearchName();
+        const tag_name = createTagName();
+        const date_sort = getDateSortValueFromParams(urlParams);
+        const name_sort = getNameSortValueFromParams(urlParams);
+
 
         return {
             "page": Number.isInteger(parseInt(page)) ? parseInt(page) : 0,
             "size": Number.isInteger(parseInt(size)) ? parseInt(size) : 5,
-            "name": name || ""
+            "name": name || "",
+            "date_sort": date_sort || "asc",
+            "name_sort": name_sort || "asc"
         };
     }
 
@@ -42,13 +50,32 @@ function AdminGiftCertificates() {
         return [];
     }
 
-    function getSearchValueFromParams(urlParams) {
-        return urlParams.get("search");
+    function getNameSortValueFromParams(urlParams) {
+        const value = urlParams.get("name_sort");
+
+        if (value !== "asc" && value !== "desc") {
+            return "";
+        }
+        return value;
+    }
+
+    function getDateSortValueFromParams(urlParams) {
+        const value = urlParams.get("date_sort");
+
+        if (value !== "asc" && value !== "desc") {
+            return "";
+        }
+        return value;
+    }
+
+    function createTagName() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get("tag_name") || "";
     }
 
     function createSearchName() {
         const urlParams = new URLSearchParams(window.location.search);
-        return getSearchValueFromParams(urlParams) || "";
+        return urlParams.get("search") || "";
     }
 
     function filterGiftCertificates(string) {
@@ -59,8 +86,21 @@ function AdminGiftCertificates() {
         }));
     }
 
+    const handleNameChange = (event) => {
+        setNameSortChecked(event.target.checked);
+    }
+
+    const handleDateChange = (event) => {
+        setDateSortChecked(event.target.checked);
+    }
+
     const handleOptionChange = (event) => {
         setSelectedOption(event.target.value);
+    };
+
+    const handleSortFormSubmit = (event) => {
+        event.preventDefault();
+        fetchPageData();
     };
 
     const fetchGiftCertificates = async () => {
@@ -92,9 +132,15 @@ function AdminGiftCertificates() {
         }
     };
 
+    const fetchPageData = () => {
+        fetchGiftCertificates().then(() => {
+        });
+        fetchGiftCertificatesSize().then(() => {
+        });
+    }
+
     useEffect(() => {
-        fetchGiftCertificates().then(() => {});
-        fetchGiftCertificatesSize().then(() => {});
+        fetchPageData();
     }, []);
 
     useEffect(() => {
@@ -107,10 +153,38 @@ function AdminGiftCertificates() {
         }
     }, [search])
 
+    useEffect(() => {
+        let result = "asc";
+        if (isNameSortChecked) {
+            result = "desc";
+        }
+        setSearchProperties({...searchProperties, name_sort: result});
+    }, [isNameSortChecked]);
+
+    useEffect(() => {
+        let result = "asc";
+        if (isDateSortChecked) {
+            result = "desc";
+        }
+        setSearchProperties({...searchProperties, date_sort: result});
+    }, [isDateSortChecked]);
+
     return (
         <>
             <CheckAuth/>
             <div className="container py-5 my-5">
+                <div className="row justify-content-center align-items-center mb-2">
+                    <div className="col-md-6">
+                        <h3 className="text-center mb-1">Gift-certificates management console</h3>
+                    </div>
+                </div>
+                <div className="row justify-content-center align-items-center mb-4">
+                    <div className="col-md-2 text-center">
+                        <a href="/admin/gift-certificates" className="btn btn-sm w-100 btn-outline-primary">
+                            <i className="bi bi-arrow-clockwise me-1"></i>Reload
+                        </a>
+                    </div>
+                </div>
                 {error &&
                     (
                         <div className="row justify-content-around align-content-center">
@@ -143,7 +217,7 @@ function AdminGiftCertificates() {
                         <nav className="navbar navbar-expand-lg">
                             <div className="container-fluid">
                                 <form id="gift-certificates-filter-form" method="get"
-                                      className="d-flex flex-wrap align-items-baseline justify-content-start w-100">
+                                      className="d-flex flex-wrap align-items-baseline justify-content-around w-100">
                                     <div className="d-flex flex-nowrap mt-2 align-items-center justify-content-between">
                                         <select value={selectedOption} onChange={handleOptionChange} name="size"
                                                 id="page-size-select" className="form-select-sm"
@@ -156,13 +230,28 @@ function AdminGiftCertificates() {
                                             Page size
                                         </label>
                                     </div>
-                                    <button className="btn btn-sm btn-outline-primary m-2" type="submit">
+                                    <div className="form-check form-switch">
+                                        <input className="form-check-input" type="checkbox" role="switch"
+                                               id="nameSort" onClick={handleNameChange} value={isNameSortChecked} name="name_sort"/>
+                                        <label className="form-check-label" htmlFor="nameSort">Asc/Desc sort by
+                                            name</label>
+                                    </div>
+                                    <div className="form-check form-switch">
+                                        <input className="form-check-input" type="checkbox" role="switch"
+                                               id="dateSort" onClick={handleDateChange} value={isDateSortChecked}/>
+                                        <label className="form-check-label"
+                                               htmlFor="flexSwitchCheckChecked">Asc/Desc sort by date</label>
+                                    </div>
+                                    <button className="btn btn-sm btn-outline-primary m-2" type="submit" onClick={handleSortFormSubmit}>
                                         <span className="me-1"><i className="bi bi-funnel"></i></span>
                                         <span>Apply</span>
                                     </button>
-                                    <a type="button" href="/admin/gift-certificates" className="btn btn-sm btn-outline-secondary m-2">
+                                    <a type="button" href="/admin/gift-certificates"
+                                       className="btn btn-sm btn-outline-secondary m-2">
                                         Reset
                                     </a>
+                                    <button type="button" className="btn btn-sm btn-outline-primary">Add new item
+                                    </button>
                                 </form>
                             </div>
                         </nav>
