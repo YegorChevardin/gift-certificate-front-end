@@ -1,7 +1,6 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import React from "react";
 
 function CheckAuth() {
     const navigate = useNavigate();
@@ -33,13 +32,10 @@ function CheckAuth() {
         const authToken = localStorage.getItem("authToken");
         if (authToken !== null && authToken !== undefined && authToken !== "") {
             checkToken(authToken).then(() => {});
+        } else {
+            navigate("/login")
         }
     }, []);
-
-    return (
-        <>
-        </>
-    );
 }
 
 export default CheckAuth;
