@@ -10,6 +10,7 @@ import Admin from "./pages/admin/Admin";
 import Logout from "./utils/Logout";
 import Account from "./pages/admin/Account";
 import AdminGiftCertificates from "./pages/admin/pages/AdminGiftCertificates";
+import GiftCertificateEdit from "./pages/admin/pages/GiftCertificateEdit";
 
 function App() {
   return (
