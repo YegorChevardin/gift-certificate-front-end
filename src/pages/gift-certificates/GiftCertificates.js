@@ -86,7 +86,7 @@ function GiftCertificates() {
                     throw new Error();
                 }
             } catch (error) {
-                setMaxPages(Math.ceil(giftCertificate.length / searchProperties.size));
+                setMaxPages(0);
             }
         };
 

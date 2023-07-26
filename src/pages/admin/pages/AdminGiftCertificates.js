@@ -3,6 +3,7 @@ import axios from "axios";
 import CheckAuth from "../../../utils/CheckAuth";
 import Pagination from "../../elements/Pagination";
 import AdminGiftCertificate from "./AdminGiftCertificate";
+import * as events from "events";
 
 function AdminGiftCertificates() {
     const giftCertificatesApiUrl = process.env.REACT_APP_API_URL + "/gift-certificates/filter";
@@ -15,8 +16,8 @@ function AdminGiftCertificates() {
     const [error, setError] = useState(null);
     const [search, setSearch] = useState(createSearchName());
     const [selectedOption, setSelectedOption] = useState('5');
-    const [isDateSortChecked, setDateSortChecked] = useState(false);
-    const [isNameSortChecked, setNameSortChecked] = useState(false);
+    const [sortType, setSortType] = useState("date_sort");
+    const [sortOrder, setSortOrder] = useState("asc");
 
     function createSearchProperties() {
         const queryString = window.location.search;
@@ -24,18 +25,24 @@ function AdminGiftCertificates() {
         const page = urlParams.get("page");
         const size = urlParams.get("size");
         const name = createSearchName();
-        const tag_name = createTagName();
         const date_sort = getDateSortValueFromParams(urlParams);
         const name_sort = getNameSortValueFromParams(urlParams);
 
-
-        return {
+        const result = {
             "page": Number.isInteger(parseInt(page)) ? parseInt(page) : 0,
             "size": Number.isInteger(parseInt(size)) ? parseInt(size) : 5,
-            "name": name || "",
-            "date_sort": date_sort || "asc",
-            "name_sort": name_sort || "asc"
+            "name": name || ""
         };
+
+        if (name_sort !== null && name_sort !== "") {
+            result.name_sort = name_sort;
+        }
+
+        if (date_sort !== null && date_sort !== "") {
+            result.date_sort = date_sort;
+        }
+
+        return result;
     }
 
     function getAuthToken() {
@@ -68,11 +75,6 @@ function AdminGiftCertificates() {
         return value;
     }
 
-    function createTagName() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get("tag_name") || "";
-    }
-
     function createSearchName() {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get("search") || "";
@@ -86,22 +88,29 @@ function AdminGiftCertificates() {
         }));
     }
 
-    const handleNameChange = (event) => {
-        setNameSortChecked(event.target.checked);
-    }
-
-    const handleDateChange = (event) => {
-        setDateSortChecked(event.target.checked);
-    }
-
     const handleOptionChange = (event) => {
         setSelectedOption(event.target.value);
+        setSearchProperties({
+            ...searchProperties,
+            size: event.target.value
+        })
     };
 
     const handleSortFormSubmit = (event) => {
         event.preventDefault();
+        setSearch("");
         fetchPageData();
     };
+
+    const handleSortOption = (event) => {
+        const sortElement = event.target.value;
+        setSortType(sortElement);
+    };
+
+    const handleSortOrder = (event) => {
+        const value = event.target.checked ? "asc" : "desc";
+        setSortOrder(value);
+    }
 
     const fetchGiftCertificates = async () => {
         try {
@@ -128,7 +137,7 @@ function AdminGiftCertificates() {
                 throw new Error();
             }
         } catch (error) {
-            setSize(Math.ceil(data.length / searchProperties.size));
+            setSize(0);
         }
     };
 
@@ -151,23 +160,22 @@ function AdminGiftCertificates() {
         if (giftCertificates != null) {
             filterGiftCertificates(search);
         }
-    }, [search])
+    }, [search]);
 
     useEffect(() => {
-        let result = "asc";
-        if (isNameSortChecked) {
-            result = "desc";
+        if (searchProperties.hasOwnProperty("name_sort") && "name_sort" !== sortType) {
+            delete searchProperties.name_sort
         }
-        setSearchProperties({...searchProperties, name_sort: result});
-    }, [isNameSortChecked]);
 
-    useEffect(() => {
-        let result = "asc";
-        if (isDateSortChecked) {
-            result = "desc";
+        if (searchProperties.hasOwnProperty("date_sort") && "date_sort" !== sortType) {
+            delete searchProperties.date_sort
         }
-        setSearchProperties({...searchProperties, date_sort: result});
-    }, [isDateSortChecked]);
+
+        setSearchProperties({
+            ...searchProperties,
+            [sortType]:sortOrder
+        });
+    }, [sortType, sortOrder]);
 
     return (
         <>
@@ -230,17 +238,23 @@ function AdminGiftCertificates() {
                                             Page size
                                         </label>
                                     </div>
-                                    <div className="form-check form-switch">
-                                        <input className="form-check-input" type="checkbox" role="switch"
-                                               id="nameSort" onClick={handleNameChange} value={isNameSortChecked} name="name_sort"/>
-                                        <label className="form-check-label" htmlFor="nameSort">Asc/Desc sort by
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="radio"
+                                               id="nameSort" value="name_sort" checked={searchProperties.hasOwnProperty("name_sort")} name="sort" onChange={handleSortOption}/>
+                                        <label className="form-check-label" htmlFor="nameSort">Sort by
                                             name</label>
                                     </div>
-                                    <div className="form-check form-switch">
-                                        <input className="form-check-input" type="checkbox" role="switch"
-                                               id="dateSort" onClick={handleDateChange} value={isDateSortChecked}/>
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="radio"
+                                               id="dateSort" checked={searchProperties.hasOwnProperty("date_sort")} value="date_sort" name="sort" onChange={handleSortOption}/>
                                         <label className="form-check-label"
-                                               htmlFor="flexSwitchCheckChecked">Asc/Desc sort by date</label>
+                                               htmlFor="flexSwitchCheckChecked">Sort by date</label>
+                                    </div>
+                                    <div className="form-check form-switch">
+                                        <input name="asc"
+                                               className="form-check-input" type="checkbox" role="switch"
+                                               id="orderSwitch" value="asc" checked={sortOrder === "asc"} onChange={handleSortOrder}/>
+                                            <label className="form-check-label" htmlFor="orderSwitch">Asc</label>
                                     </div>
                                     <button className="btn btn-sm btn-outline-primary m-2" type="submit" onClick={handleSortFormSubmit}>
                                         <span className="me-1"><i className="bi bi-funnel"></i></span>
