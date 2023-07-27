@@ -69,6 +69,8 @@ function GiftCertificateEdit(props) {
 
         if (token !== null && token !== undefined && token !== "") {
             setAuthToken(token);
+        } else {
+            setError("Cannot authenticate user, please, try to log in again. ");
         }
     }, []);
 

@@ -2,9 +2,11 @@ import React, {useState} from "react";
 import Tag from "../../gift-certificates/tags/Tag";
 import {Link} from "react-router-dom";
 import GiftCertificateEdit from "./GiftCertificateEdit";
+import GiftCertificateDelete from "./GiftCertificateDelete";
 
 function AdminGiftCertificate(props) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -13,6 +15,14 @@ function AdminGiftCertificate(props) {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
+
+    const handleCloseDeleteModal = () => {
+        setIsModalDeleteOpen(false);
+    };
+
+    const handleOpenDeleteModal = () => {
+        setIsModalDeleteOpen(true);
+    }
 
     return (
         <tr>
@@ -35,7 +45,12 @@ function AdminGiftCertificate(props) {
                         onClose={handleCloseModal}
                         {...props}
                     />
-                    <button type="button" className="btn btn-sm btn-outline-danger">Delete</button>
+                    <button type="button" className="btn btn-sm btn-outline-danger" onClick={handleOpenDeleteModal}>Delete</button>
+                    <GiftCertificateDelete
+                        isOpen={isModalDeleteOpen}
+                        onClose={handleCloseDeleteModal}
+                        {...props}
+                    />
                 </div>
             </td>
         </tr>
