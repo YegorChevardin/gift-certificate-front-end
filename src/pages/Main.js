@@ -49,9 +49,6 @@ function Main() {
                                 type="button">
                             Browse certificates!
                         </Link>
-                        <Link to="/login" className="btn btn-outline-secondary btn-lg px-4 rounded-pill" type="button">
-                            Login
-                        </Link>
                     </div>
                 </div>
             </div>

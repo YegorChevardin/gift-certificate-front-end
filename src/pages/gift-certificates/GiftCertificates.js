@@ -3,13 +3,12 @@ import Masonry from 'masonry-layout';
 import GiftCertificate from "./GiftCertificate";
 import axios from 'axios';
 import Pagination from "../elements/Pagination";
-import giftCertificate from "./GiftCertificate";
 
 function GiftCertificates() {
     const giftCertificatesApiUrl = process.env.REACT_APP_API_URL + "/gift-certificates/filter";
     const giftCertificatesSizeUrl = process.env.REACT_APP_API_URL + "/gift-certificates/size";
     const [searchProperties] = useState(createSearchProperties());
-    const [selectedOption, setSelectedOption] = useState('option2');
+    const [selectedOption, setSelectedOption] = useState('5');
     const [giftCertificates, setGiftCertificates] = useState(null);
     const [maxPages, setMaxPages] = useState(0);
     const [filteredGiftCertificates, setFilteredGiftCertificates] = useState(null);
@@ -86,7 +85,7 @@ function GiftCertificates() {
                     throw new Error();
                 }
             } catch (error) {
-                setMaxPages(Math.ceil(giftCertificate.length / searchProperties.size));
+                setMaxPages(0);
             }
         };
 
