@@ -3,7 +3,6 @@ import Masonry from 'masonry-layout';
 import GiftCertificate from "./GiftCertificate";
 import axios from 'axios';
 import Pagination from "../elements/Pagination";
-import giftCertificate from "./GiftCertificate";
 
 function GiftCertificates() {
     const giftCertificatesApiUrl = process.env.REACT_APP_API_URL + "/gift-certificates/filter";

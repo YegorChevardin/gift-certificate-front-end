@@ -28,27 +28,39 @@ function GiftCertificateEdit(props) {
     }
 
     function updateGiftCertificate() {
-        validateData();
-        sendToServer().then(() => {
-            window.location.reload();
-        });
-    }
-
-    function validateData() {
-        //validate data
+        sendToServer().then(() => {});
     }
 
     const sendToServer = async () => {
         try {
-            const response = await axios.put(giftCertificateUpdateUrl, {params: giftCertificateData});
+            const response = await axios.put(giftCertificateUpdateUrl, giftCertificateData, {
+                headers: {
+                    Authorization: authToken
+                }
+            });
             if (response.status === 200) {
                 const data = await response.data;
                 setGiftCertificateData(data);
+                window.location.reload();
             } else {
-                throw new Error();//todo handle validation or other errors
+                throw new Error();
             }
         } catch (error) {
-            setError("Something went wrong, try again later");
+            const errorData = error.response.data;
+            let message = '';
+
+            for (const key in errorData) {
+                if (Object.hasOwnProperty.call(errorData, key) && key !== "errorCode") {
+                    const value = errorData[key];
+                    message += `${value}. `;
+                }
+            }
+
+            if (message) {
+                setError(message);
+            } else {
+                setError("Something went wrong, try again later.");
+            }
         }
     };
 
