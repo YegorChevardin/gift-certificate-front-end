@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import CheckAuth from "../../../utils/CheckAuth";
-import Pagination from "../../elements/Pagination";
+import CheckAuth from "../../../../utils/CheckAuth";
+import Pagination from "../../../elements/Pagination";
 import AdminGiftCertificate from "./AdminGiftCertificate";
 
 function AdminGiftCertificates() {

@@ -9,8 +9,8 @@ import Login from "./pages/admin/auth/Login";
 import Admin from "./pages/admin/Admin";
 import Logout from "./utils/Logout";
 import Account from "./pages/admin/Account";
-import AdminGiftCertificates from "./pages/admin/pages/AdminGiftCertificates";
-import GiftCertificateEdit from "./pages/admin/pages/GiftCertificateEdit";
+import AdminGiftCertificates from "./pages/admin/pages/gift-certificates/AdminGiftCertificates";
+import AdminTags from "./pages/admin/pages/tags/AdminTags";
 
 function App() {
   return (
@@ -23,6 +23,7 @@ function App() {
                     <Route path="gift-certificates/:index" element={<GiftCertificateSingle />}/>
                     <Route path="/admin" element={<Admin/>}/>
                     <Route path="/admin/gift-certificates" element={<AdminGiftCertificates/>}/>
+                    <Route path="/admin/tags" element={<AdminTags/>}/>
                     <Route path="/account" element={<Account/>}/>
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/logout" element={<Logout/>}/>

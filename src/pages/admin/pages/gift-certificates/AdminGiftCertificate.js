@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import Tag from "../../gift-certificates/tags/Tag";
+import Tag from "../../../gift-certificates/tags/Tag";
 import {Link} from "react-router-dom";
 import GiftCertificateEdit from "./GiftCertificateEdit";
 import GiftCertificateDelete from "./GiftCertificateDelete";
