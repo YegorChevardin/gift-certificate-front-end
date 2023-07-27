@@ -3,7 +3,6 @@ import axios from "axios";
 import CheckAuth from "../../../utils/CheckAuth";
 import Pagination from "../../elements/Pagination";
 import AdminGiftCertificate from "./AdminGiftCertificate";
-import * as events from "events";
 
 function AdminGiftCertificates() {
     const giftCertificatesApiUrl = process.env.REACT_APP_API_URL + "/gift-certificates/filter";
@@ -11,7 +10,6 @@ function AdminGiftCertificates() {
     const [data, setData] = useState(null);
     const [giftCertificates, setGiftCertificates] = useState(null);
     const [size, setSize] = useState(0);
-    const [token, setToken] = useState(getAuthToken);
     const [searchProperties, setSearchProperties] = useState(createSearchProperties());
     const [error, setError] = useState(null);
     const [search, setSearch] = useState(createSearchName());
