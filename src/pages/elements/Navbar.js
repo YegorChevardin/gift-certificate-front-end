@@ -66,16 +66,18 @@ export default function Navbar() {
                                     {username === null ? 'Account' : `${username}`}<i className="bi bi-person-fill ms-1"></i>
                                 </Link>
                                 <ul className="dropdown-menu rounded rounded-4">
-                                    {isLoggedIn && (
-                                        <li>
-                                            <Link className="dropdown-item" to="/account">
-                                                Account
-                                            </Link>
-                                        </li>
-                                    )}
-                                    <li><Link className="dropdown-item" to="/login">Login</Link></li>
+                                    {
+                                        !isLoggedIn && (
+                                            <li><Link className="dropdown-item" to="/login">Login</Link></li>
+                                        )
+                                    }
                                     {isLoggedIn && (
                                         <>
+                                            <li>
+                                                <Link className="dropdown-item" to="/account">
+                                                    Account
+                                                </Link>
+                                            </li>
                                             <li>
                                                 <hr className="dropdown-divider"/>
                                             </li>
