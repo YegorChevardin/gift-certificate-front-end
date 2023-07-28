@@ -1,20 +1,29 @@
 import React, {useEffect, useState} from "react";
 import CheckAuth from "../../../../utils/CheckAuth";
-import axios from "axios";
 import Tag from "../../../gift-certificates/tags/Tag";
-import AdminGiftCertificate from "../gift-certificates/AdminGiftCertificate";
 import Pagination from "../../../elements/Pagination";
+import axios from "axios";
 
 function AdminTags() {
     const tagsUrl = process.env.REACT_APP_API_URL + "/tags/filter";
     const tagsSizeUrl = process.env.REACT_APP_API_URL + "/tags/size";
+    const tagCreateOrDeleteUrl = process.env.REACT_APP_API_URL + "/tags";
     const [data, setData] = useState(null);
     const [tags, setTags] = useState(null);
-    const [authToken, setAuthToken] = useState(null);
+    const [authToken] = useState(initAuthToken());
     const [size, setSize] = useState(0);
     const [error, setError] = useState(null);
-    const [search, setSearch] = useState(null);
+    const [search, setSearch] = useState('');
     const [sortParameters, setSortParameters] = useState(createSortParameters());
+    const [selectedOption, setSelectedOption] = useState('500');
+
+    function initAuthToken() {
+        const token = localStorage.getItem("authToken");
+        if (token !== null && token !== undefined && token !== "") {
+            return token;
+        }
+        return null;
+    }
 
     function createSortParameters() {
         const queryString = window.location.search;
@@ -26,7 +35,7 @@ function AdminTags() {
 
         return {
             page: Number.isInteger(parseInt(page)) ? parseInt(page) : 0,
-            size: Number.isInteger(parseInt(size)) ? parseInt(size) : 5,
+            size: Number.isInteger(parseInt(size)) ? parseInt(size) : 500,
             tag_name: tag_name,
             tag_name_sort: tag_name_sort === "asc" || tag_name_sort === "desc" ? tag_name_sort : "desc"
         };
@@ -34,8 +43,8 @@ function AdminTags() {
 
     function extractData(tags) {
         if (tags.hasOwnProperty("_embedded") &&
-            tags._embedded.hasOwnProperty("tagsList")) {
-            return tags._embedded.tagsList;
+            tags._embedded.hasOwnProperty("tagList")) {
+            return tags._embedded.tagList;
         }
         return [];
     }
@@ -49,16 +58,43 @@ function AdminTags() {
     }
 
     const handleSortFormSubmit = (event) => {
-        //todo
+        event.preventDefault();
+        setSearch("");
+        fetchTags().then(() => {});
+        fetchTagsSize().then(() => {});
+    };
+
+    const handleOptionChange = (event) => {
+        setSelectedOption(event.target.value);
+        setSortParameters({
+            ...sortParameters,
+            size: event.target.value
+        })
     };
 
     const handleSortOrder = (event) => {
-        //todo
+        const isChecked = event.target.checked;
+        let result = '';
+        if (isChecked) {
+            result = "asc";
+        } else {
+            result = "desc";
+        }
+        setSortParameters(
+            {
+                ...sortParameters,
+                tag_name_sort: result
+            }
+        );
     };
 
     const fetchTags = async () => {
         try {
+            if (authToken === null || authToken === undefined || authToken === "") {
+                throw new Error();
+            }
             const response = await axios.get(tagsUrl, {
+                params: sortParameters,
                 headers: {
                     Authorization: authToken
                 }
@@ -74,9 +110,40 @@ function AdminTags() {
         }
     };
 
+    const createTag = async (tagName) => {
+        try {
+            if (authToken === null || authToken === undefined || authToken === "") {
+                throw new Error();
+            }
+
+            const response = await axios.post(tagCreateOrDeleteUrl,
+                {
+                    name: tagName
+                },
+                {
+                    headers: {
+                        Authorization: authToken
+                    }
+                }
+            );
+            if (response.status === 200) {
+                fetchTags().then(() => {fetchTagsSize().then(() => {})});
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            console.log(error);
+            setError("Something went wrong, try again later");
+        }
+    }
+
     const fetchTagsSize = async () => {
         try {
-            const response = await axios.get(tagsSizeUrl, {
+            if (authToken === null || authToken === undefined || authToken === "") {
+                throw new Error();
+            }
+
+            const response = await axios.get(tagsSizeUrl,{
                 headers: {
                     Authorization: authToken
                 }
@@ -94,17 +161,17 @@ function AdminTags() {
     };
 
     useEffect(() => {
-        const token = localStorage.getItem("authToken");
-        if (token !== null && token !== undefined && token !== "") {
-            setAuthToken(token);
-        }
-    }, []);
-
-    useEffect(() => {
         setTags(data);
     }, [data]);
 
     useEffect(() => {
+        setSortParameters(
+            {
+                ...sortParameters,
+                tag_name_sort: search
+            }
+        );
+
         if (tags != null) {
             filterTags(search);
         }
@@ -192,6 +259,8 @@ function AdminTags() {
                                     </a>
                                     <button type="button" className="btn btn-sm btn-outline-primary">Add new item
                                     </button>
+                                    <button type="button" className="btn btn-sm btn-outline-danger">Delete item
+                                    </button>
                                 </form>
                             </div>
                         </nav>
@@ -204,7 +273,7 @@ function AdminTags() {
                                         placeholder="Search by name"
                                         value={`${search}`}
                                         onChange={(e) => setSearch(e.target.value)}
-                                        aria-label="Search" name="search"/>
+                                        aria-label="Search" name="tag_name"/>
                                     <button className="btn btn-sm btn-outline-success w-25">
                                         <span className="me-1"><i className="bi bi-search"></i></span>
                                         <span>Search</span>
@@ -213,9 +282,9 @@ function AdminTags() {
                             </div>
                         </nav>
                         <div className="row justify-content-center align-items-center">
-                            <div className="col-md-10">
-                                <div id="tags">
-                                    {tags && tags.map(element => (<Tag {...element}/>))}
+                            <div className="col-md-12">
+                                <div id="tags" className="d-flex flex-wrap align-items-baseline justify-content-around">
+                                    {tags && tags.map(element => (<Tag key={element.id} {...element}/>))}
                                 </div>
                             </div>
                         </div>
@@ -223,8 +292,8 @@ function AdminTags() {
                             <Pagination
                                 maxPages={size}
                                 currentPage={sortParameters.page}
-                                nextLink={`/admin/gift-certificates?page=${sortParameters.page + 1}&size=${sortParameters.size}&search=${sortParameters.name}`}
-                                previousLink={`/admin/gift-certificates?page=${sortParameters.page - 1}&size=${sortParameters.size}&search=${sortParameters.name}`}/>
+                                nextLink={`/admin/tags?page=${sortParameters.page + 1}&size=${sortParameters.size}&tag_name=${sortParameters.tag_name}`}
+                                previousLink={`/admin/tags?page=${sortParameters.page - 1}&size=${sortParameters.size}&tag_name=${sortParameters.tag_name}`}/>
                         </div>
                     </>
 

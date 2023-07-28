@@ -43,10 +43,6 @@ function AdminGiftCertificates() {
         return result;
     }
 
-    function getAuthToken() {
-        return localStorage.getItem("authToken");
-    }
-
     function extractData(giftCertificatesData) {
         if (giftCertificatesData.hasOwnProperty("_embedded") &&
             giftCertificatesData._embedded.hasOwnProperty("giftCertificateList")) {
