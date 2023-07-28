@@ -246,7 +246,7 @@ function AdminGiftCertificates() {
                                     </div>
                                     <div className="form-check form-switch">
                                         <input name="asc"
-                                               className="form-check-input" type="checkbox" role="switch"
+                                               className="form-check-input" type="checkbox" aria-checked={sortOrder === "asc"} role="switch"
                                                id="orderSwitch" value="asc" checked={sortOrder === "asc"} onChange={handleSortOrder}/>
                                             <label className="form-check-label" htmlFor="orderSwitch">Asc</label>
                                     </div>

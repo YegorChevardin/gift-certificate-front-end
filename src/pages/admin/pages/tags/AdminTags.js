@@ -3,11 +3,11 @@ import CheckAuth from "../../../../utils/CheckAuth";
 import Tag from "../../../gift-certificates/tags/Tag";
 import Pagination from "../../../elements/Pagination";
 import axios from "axios";
+import CreateTag from "./CreateTag";
 
 function AdminTags() {
     const tagsUrl = process.env.REACT_APP_API_URL + "/tags/filter";
     const tagsSizeUrl = process.env.REACT_APP_API_URL + "/tags/size";
-    const tagCreateOrDeleteUrl = process.env.REACT_APP_API_URL + "/tags";
     const [data, setData] = useState(null);
     const [tags, setTags] = useState(null);
     const [authToken] = useState(initAuthToken());
@@ -15,7 +15,15 @@ function AdminTags() {
     const [error, setError] = useState(null);
     const [search, setSearch] = useState('');
     const [sortParameters, setSortParameters] = useState(createSortParameters());
-    const [selectedOption, setSelectedOption] = useState('500');
+    const [isCreateTagModalOpen, setIsCreateTagModalOpen] = useState(false);
+
+    function handleCreateTagModalOpen() {
+        setIsCreateTagModalOpen(true);
+    }
+
+    function handleCreateTagModalClose() {
+        setIsCreateTagModalOpen(false);
+    }
 
     function initAuthToken() {
         const token = localStorage.getItem("authToken");
@@ -64,14 +72,6 @@ function AdminTags() {
         fetchTagsSize().then(() => {});
     };
 
-    const handleOptionChange = (event) => {
-        setSelectedOption(event.target.value);
-        setSortParameters({
-            ...sortParameters,
-            size: event.target.value
-        })
-    };
-
     const handleSortOrder = (event) => {
         const isChecked = event.target.checked;
         let result = '';
@@ -109,33 +109,6 @@ function AdminTags() {
             setError("Something went wrong, try again later");
         }
     };
-
-    const createTag = async (tagName) => {
-        try {
-            if (authToken === null || authToken === undefined || authToken === "") {
-                throw new Error();
-            }
-
-            const response = await axios.post(tagCreateOrDeleteUrl,
-                {
-                    name: tagName
-                },
-                {
-                    headers: {
-                        Authorization: authToken
-                    }
-                }
-            );
-            if (response.status === 200) {
-                fetchTags().then(() => {fetchTagsSize().then(() => {})});
-            } else {
-                throw new Error();
-            }
-        } catch (error) {
-            console.log(error);
-            setError("Something went wrong, try again later");
-        }
-    }
 
     const fetchTagsSize = async () => {
         try {
@@ -231,34 +204,23 @@ function AdminTags() {
                             <div className="container-fluid">
                                 <form id="gift-certificates-filter-form" method="get"
                                       className="d-flex flex-wrap align-items-baseline justify-content-around w-100">
-                                    <div className="d-flex flex-nowrap mt-2 align-items-center justify-content-between">
-                                        <select value={selectedOption} onChange={handleOptionChange} name="size"
-                                                id="page-size-select" className="form-select-sm"
-                                                aria-label="Page size">
-                                            <option value="5">5</option>
-                                            <option value="10">10</option>
-                                            <option value="20">20</option>
-                                        </select>
-                                        <label htmlFor="page-size-select" className="form-label m-1">
-                                            Page size
-                                        </label>
-                                    </div>
                                     <div className="form-check form-switch">
                                         <input name="asc"
                                                className="form-check-input" type="checkbox" role="switch"
-                                               id="orderSwitch" value="asc" checked={sortParameters.tag_name_sort === "asc"} onChange={handleSortOrder}/>
+                                               id="orderSwitch" value="asc" aria-checked={sortParameters.tag_name_sort === "asc"} checked={sortParameters.tag_name_sort === "asc"} onChange={handleSortOrder}/>
                                         <label className="form-check-label" htmlFor="orderSwitch">Asc/Desc by name</label>
                                     </div>
                                     <button className="btn btn-sm btn-outline-primary m-2" type="submit" onClick={handleSortFormSubmit}>
                                         <span className="me-1"><i className="bi bi-funnel"></i></span>
                                         <span>Apply</span>
                                     </button>
-                                    <a type="button" href="/admin/gift-certificates"
+                                    <a type="button" href="/admin/tags"
                                        className="btn btn-sm btn-outline-secondary m-2">
                                         Reset
                                     </a>
-                                    <button type="button" className="btn btn-sm btn-outline-primary">Add new item
+                                    <button type="button" className="btn btn-sm btn-outline-primary" onClick={handleCreateTagModalOpen}>Add new item
                                     </button>
+                                    <CreateTag isOpen={isCreateTagModalOpen} onClose={handleCreateTagModalClose}/>
                                     <button type="button" className="btn btn-sm btn-outline-danger">Delete item
                                     </button>
                                 </form>
