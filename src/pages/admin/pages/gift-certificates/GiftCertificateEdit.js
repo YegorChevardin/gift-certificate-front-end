@@ -27,6 +27,35 @@ function GiftCertificateEdit(props) {
         };
     }
 
+    function mapTagsToString(tags) {
+        let result = '';
+        for (let i = 0; i < tags.length; i++) {
+            result += tags[i].name;
+            if (i + 1 !== tags.length) {
+                result += ',';
+            }
+        }
+        return result;
+    }
+
+    function mapStringToTags(string) {
+        let names = string.split(",");
+        let result = [];
+
+        for (let i = 0; i < names.length; i++) {
+            result.push({
+                name: names[i]
+            });
+        }
+
+        setGiftCertificateData(
+            {
+                ...giftCertificateData,
+                tags: result
+            }
+        );
+    }
+
     function updateGiftCertificate() {
         sendToServer().then(() => {});
     }
@@ -124,6 +153,10 @@ function GiftCertificateEdit(props) {
                                 <div className="mb-3">
                                     <label htmlFor="giftcertificateDuration" className="form-label">Duration</label>
                                     <input type="number" value={giftCertificateData.duration} className="form-control" id="giftCertificateDuration" name="duration" onChange={updateGiftCertificateField} placeholder="Enter Gift Certificate Duration"/>
+                                </div>
+                                <div className="mb-5">
+                                    <label htmlFor="giftcertificateDuration" className="form-label">Tags</label>
+                                    <input type="text" value={mapTagsToString(giftCertificateData.tags)} className="form-control" id="giftCertificateTags" name="tags" onChange={(e) => {mapStringToTags(e.target.value)}} placeholder="Enter tags, separated by coma"/>
                                 </div>
                             </form>
                             <p className="mb-1">

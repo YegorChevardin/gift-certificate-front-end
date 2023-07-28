@@ -195,8 +195,8 @@ function GiftCertificates() {
                         </nav>
                         <div className="row" ref={masonryRef}>
                             {
-                                filteredGiftCertificates.map(giftCertificate => (
-                                    <div key={giftCertificate.id} className="col-sm-6 col-lg-4 mb-4">
+                                filteredGiftCertificates.map((giftCertificate, giftCertificateIndex) => (
+                                    <div key={giftCertificateIndex} className="col-sm-6 col-lg-4 mb-4">
                                         <GiftCertificate {...giftCertificate}/>
                                     </div>
                                 ))
