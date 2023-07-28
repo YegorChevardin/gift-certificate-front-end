@@ -3,6 +3,7 @@ import axios from "axios";
 import CheckAuth from "../../../../utils/CheckAuth";
 import Pagination from "../../../elements/Pagination";
 import AdminGiftCertificate from "./AdminGiftCertificate";
+import GiftCertificateCreate from "./GiftCertificateCreate";
 
 function AdminGiftCertificates() {
     const giftCertificatesApiUrl = process.env.REACT_APP_API_URL + "/gift-certificates/filter";
@@ -16,6 +17,15 @@ function AdminGiftCertificates() {
     const [selectedOption, setSelectedOption] = useState('5');
     const [sortType, setSortType] = useState("date_sort");
     const [sortOrder, setSortOrder] = useState("asc");
+    const [isCreateGiftCertificateModalOpen, setIsCreateGiftCertificateModalOpen] = useState(false);
+
+    function handleCreateGiftCertificateModalOpen() {
+        setIsCreateGiftCertificateModalOpen(true);
+    }
+
+    function handleCreateGiftCertificateModalClose() {
+        setIsCreateGiftCertificateModalOpen(false);
+    }
 
     function createSearchProperties() {
         const queryString = window.location.search;
@@ -258,8 +268,9 @@ function AdminGiftCertificates() {
                                        className="btn btn-sm btn-outline-secondary m-2">
                                         Reset
                                     </a>
-                                    <button type="button" className="btn btn-sm btn-outline-primary">Add new item
+                                    <button type="button" className="btn btn-sm btn-outline-primary" onClick={handleCreateGiftCertificateModalOpen}>Add new item
                                     </button>
+                                    <GiftCertificateCreate isOpen={isCreateGiftCertificateModalOpen} onClose={handleCreateGiftCertificateModalClose}/>
                                 </form>
                             </div>
                         </nav>
