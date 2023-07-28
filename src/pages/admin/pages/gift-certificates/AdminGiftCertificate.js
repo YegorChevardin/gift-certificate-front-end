@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Tag from "../../../gift-certificates/tags/Tag";
 import {Link} from "react-router-dom";
 import GiftCertificateEdit from "./GiftCertificateEdit";
@@ -34,7 +34,7 @@ function AdminGiftCertificate(props) {
             <td>{props.createDate}</td>
             <td>{props.lastUpdateDate}</td>
             <td>
-                {props.tags.map(tag => (<Tag key={tag.id} {...tag}/>))}
+                {props.tags.map((tag, tagIndex) => (<Tag key={tagIndex} {...tag}/>))}
             </td>
             <td>
                 <div className="d-flex justify-content-around align-items-baseline gap-2">

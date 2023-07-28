@@ -309,8 +309,8 @@ function AdminGiftCertificates() {
                                         </tr>
                                         </thead>
                                         <tbody className="border-top-0">
-                                        {giftCertificates.map(certificate => (
-                                            <AdminGiftCertificate key={certificate.id} {...certificate}/>
+                                        {giftCertificates.map((certificate, certificateIndex) => (
+                                            <AdminGiftCertificate key={certificateIndex} {...certificate}/>
                                         ))}
                                         </tbody>
                                     </table>
