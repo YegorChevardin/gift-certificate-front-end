@@ -4,6 +4,7 @@ import Tag from "../../../gift-certificates/tags/Tag";
 import Pagination from "../../../elements/Pagination";
 import axios from "axios";
 import CreateTag from "./CreateTag";
+import DeleteTag from "./DeleteTag";
 
 function AdminTags() {
     const tagsUrl = process.env.REACT_APP_API_URL + "/tags/filter";
@@ -16,6 +17,15 @@ function AdminTags() {
     const [search, setSearch] = useState('');
     const [sortParameters, setSortParameters] = useState(createSortParameters());
     const [isCreateTagModalOpen, setIsCreateTagModalOpen] = useState(false);
+    const [isDeleteTagModalOpen, setIsDeleteTagModalOpen] = useState(false);
+
+    function handleDeleteTagModalOpen() {
+        setIsDeleteTagModalOpen(true);
+    }
+
+    function handleDeleteTagModalClose() {
+        setIsDeleteTagModalOpen(false);
+    }
 
     function handleCreateTagModalOpen() {
         setIsCreateTagModalOpen(true);
@@ -221,8 +231,9 @@ function AdminTags() {
                                     <button type="button" className="btn btn-sm btn-outline-primary" onClick={handleCreateTagModalOpen}>Add new item
                                     </button>
                                     <CreateTag isOpen={isCreateTagModalOpen} onClose={handleCreateTagModalClose}/>
-                                    <button type="button" className="btn btn-sm btn-outline-danger">Delete item
+                                    <button type="button" className="btn btn-sm btn-outline-danger" onClick={handleDeleteTagModalOpen}>Delete item
                                     </button>
+                                    <DeleteTag isOpen={isDeleteTagModalOpen} onClose={handleDeleteTagModalClose}/>
                                 </form>
                             </div>
                         </nav>
