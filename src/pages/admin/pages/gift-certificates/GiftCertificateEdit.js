@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Modal from "react-modal";
 import axios from "axios";
+import CreateTagWindow from "./CreateTagWindow";
 
 function GiftCertificateEdit(props) {
     const giftCertificateUpdateUrl = process.env.REACT_APP_API_URL + "/gift-certificates";
@@ -8,6 +9,15 @@ function GiftCertificateEdit(props) {
     const [authToken, setAuthToken] = useState(null);
     const [giftCertificateData, setGiftCertificateData] = useState(initGiftCertificateData());
     const [error, setError] = useState(null);
+    const [isTagsCreationWindowOpen, setIsTagsCreationWindowOpen] = useState(false);
+
+    function openTagsCreationWindow() {
+        setIsTagsCreationWindowOpen(true);
+    }
+
+    function closeTagsCreationWindow() {
+        setIsTagsCreationWindowOpen(false);
+    }
 
     function updateGiftCertificateField(event) {
         setGiftCertificateData({
@@ -27,33 +37,13 @@ function GiftCertificateEdit(props) {
         };
     }
 
-    function mapTagsToString(tags) {
-        let result = '';
-        for (let i = 0; i < tags.length; i++) {
-            result += tags[i].name;
-            if (i + 1 !== tags.length) {
-                result += ',';
-            }
-        }
-        return result;
-    }
-
-    function mapStringToTags(string) {
-        let names = string.split(",");
-        let result = [];
-
-        for (let i = 0; i < names.length; i++) {
-            result.push({
-                name: names[i]
-            });
-        }
-
-        setGiftCertificateData(
-            {
+    function removeTagFromCertificate(tagName) {
+        if (tagName !== "" && tagName !== undefined && tagName !== null) {
+            setGiftCertificateData({
                 ...giftCertificateData,
-                tags: result
-            }
-        );
+                tags: giftCertificateData.tags.filter(tag => tag.name !== tagName)
+            })
+        }
     }
 
     function updateGiftCertificate() {
@@ -154,9 +144,49 @@ function GiftCertificateEdit(props) {
                                     <label htmlFor="giftcertificateDuration" className="form-label">Duration</label>
                                     <input type="number" value={giftCertificateData.duration} className="form-control" id="giftCertificateDuration" name="duration" onChange={updateGiftCertificateField} placeholder="Enter Gift Certificate Duration"/>
                                 </div>
-                                <div className="mb-5">
-                                    <label htmlFor="giftcertificateDuration" className="form-label">Tags</label>
-                                    <input type="text" value={mapTagsToString(giftCertificateData.tags)} className="form-control" id="giftCertificateTags" name="tags" onChange={(e) => {mapStringToTags(e.target.value)}} placeholder="Enter tags, separated by coma"/>
+                                <div className="mb-5 mt-5">
+                                    <div className="d-flex flex-wrap align-items-baseline justify-content-between">
+                                        <p className="form-label mb-2">Tags</p>
+                                        <button className="btn btn-sm btn-primary" type="button"
+                                                onClick={openTagsCreationWindow}>Add tag
+                                        </button>
+                                        <CreateTagWindow isOpen={isTagsCreationWindowOpen}
+                                                         onClose={closeTagsCreationWindow} tags={giftCertificateData.tags}/>
+                                    </div>
+                                    <div className="table-responsive">
+                                        <table
+                                            className="table table-striped table-bordered table-sm table-dark border-dark">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {giftCertificateData.tags.length === 0 && (
+                                                <tr>
+                                                    <td scope="row" colSpan="3" className="text-center">
+                                                        <h3>No tags in this gift certificate yet.</h3>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            {giftCertificateData.tags.length !== 0 && giftCertificateData.tags.map((element, indexElement) => (
+                                                <tr key={indexElement}>
+                                                    <th scope="row">{indexElement}</th>
+                                                    <td>{element.name}</td>
+                                                    <td className="text-center">
+                                                        <button type="button"
+                                                                className="btn w-100 btn-sm btn-outline-danger"
+                                                                onClick={() => removeTagFromCertificate(element.name)}>
+                                                            <i className="bi bi-trash3"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </form>
                             <p className="mb-1">

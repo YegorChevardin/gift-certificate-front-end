@@ -41,11 +41,11 @@ function GiftCertificateCreate(props) {
         });
     }
 
-    function removeTagFromCertificate(index) {
-        if (index >= 0 && index < giftCertificateData.tags.length) {
+    function removeTagFromCertificate(tagName) {
+        if (tagName !== "" && tagName !== undefined && tagName !== null) {
             setGiftCertificateData({
                 ...giftCertificateData,
-                tags: giftCertificateData.tags.splice(index, 1)
+                tags: giftCertificateData.tags.filter(tag => tag.name !== tagName)
             })
         }
     }
@@ -191,7 +191,7 @@ function GiftCertificateCreate(props) {
                                                     <td className="text-center">
                                                         <button type="button"
                                                                 className="btn w-100 btn-sm btn-outline-danger"
-                                                                onClick={() => removeTagFromCertificate(indexElement)}>
+                                                                onClick={() => removeTagFromCertificate(element.name)}>
                                                             <i className="bi bi-trash3"></i>
                                                         </button>
                                                     </td>
