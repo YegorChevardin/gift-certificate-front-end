@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Modal from "react-modal";
 import axios from "axios";
+import CreateTagWindow from "./CreateTagWindow";
 
 function GiftCertificateCreate(props) {
     const giftCertificateCreateUrl = process.env.REACT_APP_API_URL + "/gift-certificates";
@@ -8,34 +9,14 @@ function GiftCertificateCreate(props) {
     const [authToken, setAuthToken] = useState(null);
     const [giftCertificateData, setGiftCertificateData] = useState(initGiftCertificateData());
     const [error, setError] = useState(null);
+    const [isTagsCreationWindowOpen, setIsTagsCreationWindowOpen] = useState(false);
 
-    function mapTagsToString(tags) {
-        let result = '';
-        for (let i = 0; i < tags.length; i++) {
-            result += tags[i].name;
-            if (i + 1 !== tags.length) {
-                result += ',';
-            }
-        }
-        return result;
+    function openTagsCreationWindow() {
+        setIsTagsCreationWindowOpen(true);
     }
 
-    function mapStringToTags(string) {
-        let names = string.split(",");
-        let result = [];
-
-        for (let i = 0; i < names.length; i++) {
-            result.push({
-                name: names[i]
-            });
-        }
-
-        setGiftCertificateData(
-            {
-                ...giftCertificateData,
-                tags: result
-            }
-        );
+    function closeTagsCreationWindow() {
+        setIsTagsCreationWindowOpen(false);
     }
 
     function updateGiftCertificateField(event) {
@@ -56,7 +37,17 @@ function GiftCertificateCreate(props) {
     }
 
     function createGiftCertificate() {
-        sendToServer().then(() => {});
+        sendToServer().then(() => {
+        });
+    }
+
+    function removeTagFromCertificate(index) {
+        if (index >= 0 && index < giftCertificateData.tags.length) {
+            setGiftCertificateData({
+                ...giftCertificateData,
+                tags: giftCertificateData.tags.splice(index, 1)
+            })
+        }
     }
 
     const sendToServer = async () => {
@@ -141,29 +132,84 @@ function GiftCertificateCreate(props) {
                             <form>
                                 <div className="mb-3">
                                     <label htmlFor="giftCertificateName" className="form-label">Name</label>
-                                    <input type="text" value={giftCertificateData.name} className="form-control" id="giftCertificateName" name="name" onChange={updateGiftCertificateField} placeholder="Enter Gift Certificate name"/>
+                                    <input type="text" value={giftCertificateData.name} className="form-control"
+                                           id="giftCertificateName" name="name" onChange={updateGiftCertificateField}
+                                           placeholder="Enter Gift Certificate name"/>
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="giftCertificateDescription" className="form-label">Description</label>
-                                    <input type="text" value={giftCertificateData.description} className="form-control" id="giftCertificateDescription" name="description" onChange={updateGiftCertificateField} placeholder="Enter Gift Certificate description"/>
+                                    <label htmlFor="giftCertificateDescription"
+                                           className="form-label">Description</label>
+                                    <input type="text" value={giftCertificateData.description} className="form-control"
+                                           id="giftCertificateDescription" name="description"
+                                           onChange={updateGiftCertificateField}
+                                           placeholder="Enter Gift Certificate description"/>
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="giftCertificatePrice" className="form-label">Price</label>
-                                    <input type="number" value={giftCertificateData.price} className="form-control" id="giftCertificatePrice" name="price" onChange={updateGiftCertificateField} placeholder="Enter Gift Certificate price"/>
+                                    <input type="number" value={giftCertificateData.price} className="form-control"
+                                           id="giftCertificatePrice" name="price" onChange={updateGiftCertificateField}
+                                           placeholder="Enter Gift Certificate price"/>
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="giftcertificateDuration" className="form-label">Duration</label>
-                                    <input type="number" value={giftCertificateData.duration} className="form-control" id="giftCertificateDuration" name="duration" onChange={updateGiftCertificateField} placeholder="Enter Gift Certificate Duration"/>
+                                    <input type="number" value={giftCertificateData.duration} className="form-control"
+                                           id="giftCertificateDuration" name="duration"
+                                           onChange={updateGiftCertificateField}
+                                           placeholder="Enter Gift Certificate Duration"/>
                                 </div>
-                                <div className="mb-5">
-                                    <label htmlFor="giftcertificateDuration" className="form-label">Tags</label>
-                                    <input type="text" value={mapTagsToString(giftCertificateData.tags)} className="form-control" id="giftCertificateTags" name="tags" onChange={(e) => {mapStringToTags(e.target.value)}} placeholder="Enter tags, separated by coma"/>
+                                <div className="mb-5 mt-5">
+                                    <div className="d-flex flex-wrap align-items-baseline justify-content-between">
+                                        <p className="form-label mb-2">Tags</p>
+                                        <button className="btn btn-sm btn-primary" type="button"
+                                                onClick={openTagsCreationWindow}>Add tag
+                                        </button>
+                                        <CreateTagWindow isOpen={isTagsCreationWindowOpen}
+                                                         onClose={closeTagsCreationWindow} tags={giftCertificateData.tags}/>
+                                    </div>
+                                    <div className="table-responsive">
+                                        <table
+                                            className="table table-striped table-bordered table-sm table-dark border-dark">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {giftCertificateData.tags.length === 0 && (
+                                                <tr>
+                                                   <td scope="row" colSpan="3" className="text-center">
+                                                       <h3>No tags in this gift certificate yet.</h3>
+                                                   </td>
+                                                </tr>
+                                            )}
+                                            {giftCertificateData.tags.length !== 0 && giftCertificateData.tags.map((element, indexElement) => (
+                                                <tr key={indexElement}>
+                                                    <th scope="row">{indexElement}</th>
+                                                    <td>{element.name}</td>
+                                                    <td className="text-center">
+                                                        <button type="button"
+                                                                className="btn w-100 btn-sm btn-outline-danger"
+                                                                onClick={() => removeTagFromCertificate(indexElement)}>
+                                                            <i className="bi bi-trash3"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </form>
                         </div>
                         <div className="modal-footer gap-2">
-                            <button type="button" className="btn btn-secondary" aria-label="Close" data-bs-dismiss="modal" onClick={props.onClose}>Close</button>
-                            <button type="button" className={`btn btn-primary ${authToken ? '' : 'disabled'}`} onClick={createGiftCertificate}>Save Changes</button>
+                            <button type="button" className="btn btn-secondary" aria-label="Close"
+                                    data-bs-dismiss="modal" onClick={props.onClose}>Close
+                            </button>
+                            <button type="button" className={`btn btn-primary ${authToken ? '' : 'disabled'}`}
+                                    onClick={createGiftCertificate}>Save Changes
+                            </button>
                         </div>
                     </div>
                 </div>

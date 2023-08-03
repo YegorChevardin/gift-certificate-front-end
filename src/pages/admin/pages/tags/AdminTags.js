@@ -199,7 +199,7 @@ function AdminTags() {
                         </div>
                     )
                 }
-                {(!error && tags !== null && data.length === 0) &&
+                {(!error && tags && data.length === 0) &&
                     (
                         <div className="row justify-content-around align-content-center">
                             <div className="col-md-8 align-self-center text-center">

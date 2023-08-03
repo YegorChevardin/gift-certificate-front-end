@@ -31,9 +31,9 @@ function CheckAuth() {
     useEffect(() => {
         const authToken = localStorage.getItem("authToken");
         if (authToken !== null && authToken !== undefined && authToken !== "") {
-            checkToken(authToken).then(() => {});
+            checkToken(authToken).then(r => {});
         } else {
-            navigate("/login")
+            navigate("/login");
         }
     }, []);
 }
